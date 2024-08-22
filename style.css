@@ -32,6 +32,11 @@ main {
 
 section {
     text-align: center;
+    display: none; /* Nascondi tutte le sezioni inizialmente */
+}
+
+.visible {
+    display: block; /* Mostra la sezione attiva */
 }
 
 .title {
@@ -54,10 +59,6 @@ button {
 
 button:hover {
     background-color: #0056b3;
-}
-
-.hidden {
-    display: none;
 }
 
 #game-container {
