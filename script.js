@@ -126,7 +126,7 @@ function startGame() {
 
 function showTasks() {
     document.getElementById('menu').classList.add('hidden');
-    document.getElementById('tasks').classList.remove('hidden');
+    document.getElementId('tasks').classList.remove('hidden');
 }
 
 function showFrens() {
@@ -173,3 +173,8 @@ function saveUserData() {
 }
 
 window.addEventListener('beforeunload', saveUserData);
+
+// Event Listeners per i bottoni
+document.getElementById('start-button').addEventListener('click', startGame);
+document.getElementById('tasks-button').addEventListener('click', showTasks);
+document.getElementById('frens-button').addEventListener('click', showFrens);
