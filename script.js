@@ -128,25 +128,39 @@ document.getElementById('joinCommunityBtn').addEventListener('click', () => {
 // Gestione della navigazione tra le sezioni
 const playBtn = document.getElementById('playBtn');
 const taskBtn = document.getElementById('taskBtn');
+const menu = document.getElementById('menu');
+const hud = document.getElementById('hud');
+const playSection = document.getElementById('play-section');
+const taskSection = document.getElementById('task-section');
+const gameCanvas = document.getElementById('gameCanvas');
+const bottomNav = document.querySelector('.bottom-nav');
 
 playBtn.addEventListener('click', () => {
-    document.getElementById('play-section').classList.add('active');
-    document.getElementById('task-section').classList.remove('active');
-    playBtn.classList.add('active');
+    menu.style.display = 'none'; // Nasconde il menu se si passa al gioco
+    taskSection.classList.remove('active');
+    playSection.classList.add('active');
     taskBtn.classList.remove('active');
+    playBtn.classList.add('active');
+    hud.style.display = 'flex'; // Mostra l'HUD
+    gameCanvas.style.display = 'block'; // Mostra il canvas di gioco
 });
 
 taskBtn.addEventListener('click', () => {
-    document.getElementById('play-section').classList.remove('active');
-    document.getElementById('task-section').classList.add('active');
-    taskBtn.classList.add('active');
+    menu.style.display = 'none'; // Nasconde il menu se si passa alla task
+    playSection.classList.remove('active');
+    taskSection.classList.add('active');
     playBtn.classList.remove('active');
+    taskBtn.classList.add('active');
+    hud.style.display = 'none'; // Nasconde l'HUD
+    gameCanvas.style.display = 'none'; // Nasconde il canvas di gioco
+    bottomNav.style.display = 'flex'; // Mostra la navigazione in basso
 });
 
 // Gestione del menu di avvio
 document.getElementById('startGameBtn').addEventListener('click', () => {
-    document.getElementById('menu').style.display = 'none'; // Nasconde il menu
-    document.getElementById('hud').style.display = 'flex'; // Mostra l'HUD
-    canvas.style.display = 'block'; // Mostra il canvas di gioco
+    menu.style.display = 'none'; // Nasconde il menu
+    hud.style.display = 'flex'; // Mostra l'HUD
+    gameCanvas.style.display = 'block'; // Mostra il canvas di gioco
+    bottomNav.style.display = 'flex'; // Mostra la navigazione in basso
     game = setInterval(draw, speed); // Avvia il gioco
 });
