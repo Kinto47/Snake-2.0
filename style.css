@@ -32,17 +32,13 @@ main {
 
 section {
     text-align: center;
-    display: none; /* Nascondi tutte le sezioni inizialmente */
-}
-
-.visible {
-    display: block; /* Mostra la sezione attiva */
+    display: none;
 }
 
 .title {
     font-size: 3em;
     color: #007bff;
-    font-family: 'Press Start 2P', cursive; /* Font pixelato */
+    font-family: 'Press Start 2P', cursive;
 }
 
 button {
@@ -61,20 +57,18 @@ button:hover {
     background-color: #0056b3;
 }
 
+.visible {
+    display: block;
+}
+
 #game-container {
-    width: 100%;
-    height: 70vh;
+    width: 800px;
+    height: 600px;
     background-color: #e0e0e0;
-    position: relative;
+    margin: 0 auto;
 }
 
 #score {
     font-size: 1.5em;
     margin-top: 10px;
-}
-
-#joystick-container {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
 }
