@@ -1,156 +1,47 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const startButton = document.getElementById('start-button');
-    const tasksButton = document.getElementById('tasks-button');
-    const frensButton = document.getElementById('frens-button');
-    const joinGroupButton = document.getElementById('join-group-button');
-    const subscribeChannelButton = document.getElementById('subscribe-channel-button');
-    const generateRefLinkButton = document.getElementById('generate-ref-link-button');
-
+document.addEventListener('DOMContentLoaded', () => {
+    const tapProgress = document.getElementById('tap-progress');
+    const tapCount = document.getElementById('tap-count');
+    const toshiCounter = document.getElementById('toshi-counter');
+    const coin = document.getElementById('coin');
+    const joinGroupBtn = document.getElementById('join-group');
+    const joinChannelBtn = document.getElementById('join-channel');
+    
+    let taps = 0;
     let toshi = 0;
 
-    startButton.addEventListener('click', function() {
-        console.log("Start Button Clicked");
-        showSection('game');
-        startGame();
+    coin.addEventListener('click', () => {
+        if (taps < 100) {
+            taps++;
+            toshi++;
+            tapProgress.value = taps;
+            tapCount.textContent = `${taps}/100 TOSHI`;
+            updateToshiCounter();
+        } else {
+            alert('You have reached your daily limit of 100 TOSHI. Come back tomorrow!');
+        }
     });
 
-    tasksButton.addEventListener('click', function() {
-        console.log("Tasks Button Clicked");
-        showSection('tasks');
-    });
-
-    frensButton.addEventListener('click', function() {
-        console.log("Frens Button Clicked");
-        showSection('frens');
-    });
-
-    joinGroupButton.addEventListener('click', function() {
-        addToshi(100);
-        alert("You have joined the group and earned 100 TOSHI!");
-    });
-
-    subscribeChannelButton.addEventListener('click', function() {
-        addToshi(200);
-        alert("You have subscribed to the channel and earned 200 TOSHI!");
-    });
-
-    generateRefLinkButton.addEventListener('click', function() {
-        generateRefLink();
-    });
-
-    function showSection(sectionId) {
-        const sections = document.querySelectorAll('section');
-        sections.forEach(section => {
-            section.classList.add('hidden');
-            section.classList.remove('visible');
-        });
-
-        document.getElementById(sectionId).classList.remove('hidden');
-        document.getElementById(sectionId).classList.add('visible');
+    function updateToshiCounter() {
+        toshiCounter.textContent = `${toshi} TOSHI`;
     }
 
-    function addToshi(amount) {
-        toshi += amount;
-        document.getElementById('toshi-count').innerText = `TOSHI: ${toshi}`;
+    window.completeTask = (task) => {
+        if (task === 'group') {
+            toshi += 300;
+            joinGroupBtn.disabled = true;
+            joinGroupBtn.textContent = 'Group Joined (300 TOSHI)';
+        } else if (task === 'channel') {
+            toshi += 500;
+            joinChannelBtn.disabled = true;
+            joinChannelBtn.textContent = 'Channel Joined (500 TOSHI)';
+        }
+        updateToshiCounter();
     }
 
-    function generateRefLink() {
-        const username = "Username"; // Questo dovrebbe essere dinamico
-        const refLink = `https://example.com/ref?user=${username}`;
-        document.getElementById('referral-link').innerText = `Your referral link: ${refLink}`;
-        addToshi(200);
-    }
-
-    function startGame() {
-        const config = {
-            type: Phaser.AUTO,
-            width: 800,
-            height: 600,
-            parent: 'game-container',
-            backgroundColor: '#ffffff',
-            scene: {
-                preload: preload,
-                create: create,
-                update: update
-            }
-        };
-
-        let game = new Phaser.Game(config);
-        let snake;
-        let coin;
-        let cursors;
-        let score = 0;
-        let direction = 'right';
-        let speed = 200;
-        let lastMoveTime = 0;
-
-        function preload() {
-            this.load.image('satoshi', 'satoshi.png');
-            this.load.image('coin', 'bitcoin.png');
-        }
-
-        function create() {
-            snake = this.physics.add.group();
-            let startX = Phaser.Math.Between(100, 700);
-            let startY = Phaser.Math.Between(100, 500);
-            snake.create(startX, startY, 'satoshi');
-
-            coin = this.physics.add.image(Phaser.Math.Between(50, 750), Phaser.Math.Between(50, 550), 'coin');
-            cursors = this.input.keyboard.createCursorKeys();
-        }
-
-        function update(time) {
-            if (time >= lastMoveTime + speed) {
-                let snakeHead = snake.getChildren()[0];
-
-                switch (direction) {
-                    case 'left':
-                        snakeHead.x -= 10;
-                        break;
-                    case 'right':
-                        snakeHead.x += 10;
-                        break;
-                    case 'up':
-                        snakeHead.y -= 10;
-                        break;
-                    case 'down':
-                        snakeHead.y += 10;
-                        break;
-                }
-
-                lastMoveTime = time;
-
-                if (Phaser.Geom.Intersects.RectangleToRectangle(snakeHead.getBounds(), coin.getBounds())) {
-                    collectCoin();
-                }
-
-                if (snakeHead.x < 0 || snakeHead.x > 800 || snakeHead.y < 0 || snakeHead.y > 600) {
-                    gameOver();
-                }
-            }
-
-            if (cursors.left.isDown) {
-                direction = 'left';
-            } else if (cursors.right.isDown) {
-                direction = 'right';
-            } else if (cursors.up.isDown) {
-                direction = 'up';
-            } else if (cursors.down.isDown) {
-                direction = 'down';
-            }
-        }
-
-        function collectCoin() {
-            score += 10;
-            document.getElementById('score').innerText = `Score: ${score}`;
-            coin.setPosition(Phaser.Math.Between(50, 750), Phaser.Math.Between(50, 550));
-            addToshi(10);
-        }
-
-        function gameOver() {
-            alert(`Game Over! Your final score is ${score}.`);
-            game.destroy(true);
-            showSection('menu');
-        }
-    }
+    // Reset tap count every 24 hours (pseudo code)
+    // setInterval(() => {
+    //     taps = 0;
+    //     tapProgress.value = taps;
+    //     tapCount.textContent = `${taps}/100 TOSHI`;
+    // }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
 });
