@@ -12,9 +12,12 @@ let food = {
 };
 
 let score = 0;
+let toshiBalance = parseInt(localStorage.getItem('toshiBalance')) || 0;
+let communityJoined = localStorage.getItem('communityJoined') === 'true';
 
-// Controlla la direzione del serpente in base ai tasti premuti
-document.addEventListener('keydown', setDirection);
+// Aggiorna il punteggio e il bilancio di TOSHI
+document.getElementById('score').innerText = `Score: ${score}`;
+document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
 
 function setDirection(event) {
     const key = event.keyCode;
@@ -29,7 +32,8 @@ function setDirection(event) {
     }
 }
 
-// Funzione per disegnare il serpente e il cibo
+document.addEventListener('keydown', setDirection);
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -43,17 +47,14 @@ function draw() {
     ctx.fillStyle = 'red';
     ctx.fillRect(food.x, food.y, box, box);
 
-    // Posizione della testa del serpente
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
 
-    // Aggiorna la posizione del serpente in base alla direzione
     if (direction === 'LEFT') snakeX -= box;
     if (direction === 'UP') snakeY -= box;
     if (direction === 'RIGHT') snakeX += box;
     if (direction === 'DOWN') snakeY += box;
 
-    // Se il serpente mangia il cibo
     if (snakeX === food.x && snakeY === food.y) {
         score++;
         document.getElementById('score').innerText = `Score: ${score}`;
@@ -62,13 +63,11 @@ function draw() {
             y: Math.floor(Math.random() * 19 + 1) * box
         };
     } else {
-        snake.pop(); // Rimuove l'ultimo segmento del serpente
+        snake.pop();
     }
 
-    // Aggiunge una nuova testa alla posizione calcolata
     const newHead = { x: snakeX, y: snakeY };
 
-    // Controlla le collisioni con il serpente stesso o con i bordi del campo di gioco
     if (snakeX < 0 || snakeX >= 20 * box || snakeY < 0 || snakeY >= 20 * box || collision(newHead, snake)) {
         clearInterval(game);
         alert('Game Over! Press OK to restart.');
@@ -78,7 +77,6 @@ function draw() {
     snake.unshift(newHead);
 }
 
-// Funzione per controllare se il serpente collide con se stesso
 function collision(head, array) {
     for (let i = 0; i < array.length; i++) {
         if (head.x === array[i].x && head.y === array[i].y) {
@@ -88,5 +86,49 @@ function collision(head, array) {
     return false;
 }
 
-// Imposta l'intervallo per il ciclo di gioco
 const game = setInterval(draw, 100);
+
+// Sistema di task e rewards
+function updateJoinCommunityButton() {
+    const joinCommunityBtn = document.getElementById('joinCommunityBtn');
+    if (communityJoined) {
+        joinCommunityBtn.disabled = true;
+        joinCommunityBtn.innerText = 'You have already joined the community';
+    } else {
+        joinCommunityBtn.disabled = false;
+        joinCommunityBtn.innerText = 'Join the Community and Earn 10 TOSHI';
+    }
+}
+
+updateJoinCommunityButton();
+
+document.getElementById('joinCommunityBtn').addEventListener('click', () => {
+    if (!communityJoined && confirm('Do you want to join the community and earn 10 TOSHI?')) {
+        window.open('https://t.me/thesatoshicircle', '_blank');
+        toshiBalance += 10;
+        localStorage.setItem('toshiBalance', toshiBalance);
+        document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
+        communityJoined = true;
+        localStorage.setItem('communityJoined', 'true');
+        updateJoinCommunityButton();
+        alert('You have earned 10 TOSHI!');
+    }
+});
+
+// Gestione della navigazione tra le sezioni
+const playBtn = document.getElementById('playBtn');
+const taskBtn = document.getElementById('taskBtn');
+
+playBtn.addEventListener('click', () => {
+    document.getElementById('play-section').classList.add('active');
+    document.getElementById('task-section').classList.remove('active');
+    playBtn.classList.add('active');
+    taskBtn.classList.remove('active');
+});
+
+taskBtn.addEventListener('click', () => {
+    document.getElementById('play-section').classList.remove('active');
+    document.getElementById('task-section').classList.add('active');
+    taskBtn.classList.add('active');
+    playBtn.classList.remove('active');
+});
