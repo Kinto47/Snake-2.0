@@ -82,3 +82,10 @@ canvas {
     background-color: #0056b3;
     color: #fff;
 }
+.section {
+    display: none; /* Nasconde tutte le sezioni di default */
+}
+
+.active {
+    display: block; /* Mostra solo la sezione attiva */
+}
