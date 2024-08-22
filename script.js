@@ -17,7 +17,7 @@ let coin;
 let cursors;
 let score = 0;
 let speed = 100;
-let username = "Username"; // Popolato dinamicamente
+let username = "Username"; // Questo dovrebbe essere popolato dinamicamente
 let toshi = 0;
 let direction = 'right';
 let joystick;
@@ -122,18 +122,18 @@ function resetGame() {
 }
 
 function startGame() {
-    document.getElementById('menu').classList.add('hidden');
-    document.getElementById('game').classList.remove('hidden');
+    document.getElementById('menu').style.display = 'none';
+    document.getElementById('game').style.display = 'block';
 }
 
 function showTasks() {
-    document.getElementById('menu').classList.add('hidden');
-    document.getElementById('tasks').classList.remove('hidden');
+    document.getElementById('menu').style.display = 'none';
+    document.getElementById('tasks').style.display = 'block';
 }
 
 function showFrens() {
-    document.getElementById('menu').classList.add('hidden');
-    document.getElementById('frens').classList.remove('hidden');
+    document.getElementById('menu').style.display = 'none';
+    document.getElementById('frens').style.display = 'block';
 }
 
 function generateRefLink() {
@@ -177,6 +177,8 @@ function saveUserData() {
 window.addEventListener('beforeunload', saveUserData);
 
 // Event Listeners per i bottoni
-document.getElementById('start-button').addEventListener('click', startGame);
-document.getElementById('tasks-button').addEventListener('click', showTasks);
-document.getElementById('frens-button').addEventListener('click', showFrens);
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('start-button').addEventListener('click', startGame);
+    document.getElementById('tasks-button').addEventListener('click', showTasks);
+    document.getElementById('frens-button').addEventListener('click', showFrens);
+});
