@@ -14,6 +14,8 @@ let food = {
 let score = 0;
 let toshiBalance = parseInt(localStorage.getItem('toshiBalance')) || 0;
 let communityJoined = localStorage.getItem('communityJoined') === 'true';
+let speed = 200; // Velocità iniziale in millisecondi
+let game;
 
 // Aggiorna il punteggio e il bilancio di TOSHI
 document.getElementById('score').innerText = `Score: ${score}`;
@@ -57,11 +59,22 @@ function draw() {
 
     if (snakeX === food.x && snakeY === food.y) {
         score++;
+        toshiBalance += 1; // Assegna 1 TOSHI per ogni punto
         document.getElementById('score').innerText = `Score: ${score}`;
+        document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
+        localStorage.setItem('toshiBalance', toshiBalance);
+
         food = {
             x: Math.floor(Math.random() * 19 + 1) * box,
             y: Math.floor(Math.random() * 19 + 1) * box
         };
+
+        // Aumenta la velocità ogni 10 punti
+        if (score % 10 === 0) {
+            clearInterval(game);
+            speed -= 20; // Riduce il tempo di intervallo, aumentando la velocità
+            game = setInterval(draw, speed);
+        }
     } else {
         snake.pop();
     }
@@ -79,56 +92,4 @@ function draw() {
 
 function collision(head, array) {
     for (let i = 0; i < array.length; i++) {
-        if (head.x === array[i].x && head.y === array[i].y) {
-            return true;
-        }
-    }
-    return false;
-}
-
-const game = setInterval(draw, 100);
-
-// Sistema di task e rewards
-function updateJoinCommunityButton() {
-    const joinCommunityBtn = document.getElementById('joinCommunityBtn');
-    if (communityJoined) {
-        joinCommunityBtn.disabled = true;
-        joinCommunityBtn.innerText = 'You have already joined the community';
-    } else {
-        joinCommunityBtn.disabled = false;
-        joinCommunityBtn.innerText = 'Join the Community and Earn 10 TOSHI';
-    }
-}
-
-updateJoinCommunityButton();
-
-document.getElementById('joinCommunityBtn').addEventListener('click', () => {
-    if (!communityJoined && confirm('Do you want to join the community and earn 10 TOSHI?')) {
-        window.open('https://t.me/thesatoshicircle', '_blank');
-        toshiBalance += 10;
-        localStorage.setItem('toshiBalance', toshiBalance);
-        document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
-        communityJoined = true;
-        localStorage.setItem('communityJoined', 'true');
-        updateJoinCommunityButton();
-        alert('You have earned 10 TOSHI!');
-    }
-});
-
-// Gestione della navigazione tra le sezioni
-const playBtn = document.getElementById('playBtn');
-const taskBtn = document.getElementById('taskBtn');
-
-playBtn.addEventListener('click', () => {
-    document.getElementById('play-section').classList.add('active');
-    document.getElementById('task-section').classList.remove('active');
-    playBtn.classList.add('active');
-    taskBtn.classList.remove('active');
-});
-
-taskBtn.addEventListener('click', () => {
-    document.getElementById('play-section').classList.remove('active');
-    document.getElementById('task-section').classList.add('active');
-    taskBtn.classList.add('active');
-    playBtn.classList.remove('active');
-});
+        if (head.x === array[i].x && head.y ===
