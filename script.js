@@ -5,7 +5,8 @@ const box = 20; // Dimensione di ogni segmento del serpente e del cibo
 let snake = [];
 snake[0] = { x: 9 * box, y: 10 * box };
 
-let direction;
+let directionX = 0;  // Direzione X del movimento
+let directionY = 0;  // Direzione Y del movimento
 let food = {
     x: Math.floor(Math.random() * 19 + 1) * box,
     y: Math.floor(Math.random() * 19 + 1) * box
@@ -17,60 +18,39 @@ let communityJoined = localStorage.getItem('communityJoined') === 'true';
 let speed = 200; // Velocità iniziale in millisecondi
 let game;
 
-// Variabili per rilevamento del touch
-let startX = 0;
-let startY = 0;
-let endX = 0;
-let endY = 0;
-
-// Aggiorna il punteggio e il bilancio di TOSHI
 document.getElementById('score').innerText = `Score: ${score}`;
 document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
 
-function setDirection(event) {
-    const key = event.keyCode;
-    if (key === 37 && direction !== 'RIGHT') {
-        direction = 'LEFT';
-    } else if (key === 38 && direction !== 'DOWN') {
-        direction = 'UP';
-    } else if (key === 39 && direction !== 'LEFT') {
-        direction = 'RIGHT';
-    } else if (key === 40 && direction !== 'UP') {
-        direction = 'DOWN';
-    }
-}
+// Joystick setup
+const joystick = document.getElementById('joystick');
+const stick = document.querySelector('#joystick .stick');
+let joystickActive = false;
+let joystickCenter = { x: 0, y: 0 };
 
-document.addEventListener('keydown', setDirection);
-
-// Gestione del touch per Android/iOS
-canvas.addEventListener('touchstart', function(event) {
-    startX = event.touches[0].clientX;
-    startY = event.touches[0].clientY;
+joystick.addEventListener('touchstart', function(event) {
+    joystickActive = true;
+    const touch = event.touches[0];
+    joystickCenter = { x: touch.clientX, y: touch.clientY };
 }, false);
 
-canvas.addEventListener('touchmove', function(event) {
-    event.preventDefault();
-    endX = event.touches[0].clientX;
-    endY = event.touches[0].clientY;
+joystick.addEventListener('touchmove', function(event) {
+    if (!joystickActive) return;
+    const touch = event.touches[0];
+    const offsetX = touch.clientX - joystickCenter.x;
+    const offsetY = touch.clientY - joystickCenter.y;
+    stick.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+
+    // Normalizza il movimento per ottenere direzione
+    const magnitude = Math.sqrt(offsetX ** 2 + offsetY ** 2);
+    directionX = offsetX / magnitude;
+    directionY = offsetY / magnitude;
 }, false);
 
-canvas.addEventListener('touchend', function() {
-    const diffX = endX - startX;
-    const diffY = endY - startY;
-
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (diffX > 0 && direction !== 'LEFT') {
-            direction = 'RIGHT';
-        } else if (diffX < 0 && direction !== 'RIGHT') {
-            direction = 'LEFT';
-        }
-    } else {
-        if (diffY > 0 && direction !== 'UP') {
-            direction = 'DOWN';
-        } else if (diffY < 0 && direction !== 'DOWN') {
-            direction = 'UP';
-        }
-    }
+joystick.addEventListener('touchend', function() {
+    joystickActive = false;
+    stick.style.transform = 'translate(0, 0)';
+    directionX = 0;
+    directionY = 0;
 }, false);
 
 function draw() {
@@ -86,13 +66,8 @@ function draw() {
     ctx.fillStyle = 'red';
     ctx.fillRect(food.x, food.y, box, box);
 
-    let snakeX = snake[0].x;
-    let snakeY = snake[0].y;
-
-    if (direction === 'LEFT') snakeX -= box;
-    if (direction === 'UP') snakeY -= box;
-    if (direction === 'RIGHT') snakeX += box;
-    if (direction === 'DOWN') snakeY += box;
+    let snakeX = snake[0].x + directionX * box;
+    let snakeY = snake[0].y + directionY * box;
 
     if (snakeX === food.x && snakeY === food.y) {
         score++;
@@ -180,6 +155,7 @@ playBtn.addEventListener('click', () => {
     playBtn.classList.add('active');
     hud.style.display = 'flex'; // Mostra l'HUD
     gameCanvas.style.display = 'block'; // Mostra il canvas di gioco
+    joystick.style.display = 'block'; // Mostra il joystick
 });
 
 taskBtn.addEventListener('click', () => {
@@ -190,6 +166,7 @@ taskBtn.addEventListener('click', () => {
     taskBtn.classList.add('active');
     hud.style.display = 'none'; // Nasconde l'HUD
     gameCanvas.style.display = 'none'; // Nasconde il canvas di gioco
+    joystick.style.display = 'none'; // Nasconde il joystick
     bottomNav.style.display = 'flex'; // Mostra la navigazione in basso
 });
 
@@ -198,6 +175,7 @@ document.getElementById('startGameBtn').addEventListener('click', () => {
     menu.style.display = 'none'; // Nasconde il menu
     hud.style.display = 'flex'; // Mostra l'HUD
     gameCanvas.style.display = 'block'; // Mostra il canvas di gioco
+    joystick.style.display = 'block'; // Mostra il joystick
     bottomNav.style.display = 'flex'; // Mostra la navigazione in basso
     game = setInterval(draw, speed); // Avvia il gioco
 });
