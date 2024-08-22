@@ -62,12 +62,3 @@ canvas {
     margin-top: 20px;
     font-size: 24px;
 }
-
-#joystick {
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle, #007BFF 0%, #0056b3 70%);
-    border-radius: 50%;
-    position: relative;
-    margin: 20px auto;
-}
