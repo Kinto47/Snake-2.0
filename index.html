@@ -1,51 +1,38 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satoshi Circle</title>
+    <title>Satoshi Tap Game</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <div class="header-content">
-            <div id="user-info">
-                <span id="username">Username</span>
-                <span id="toshi-count">TOSHI: 0</span>
-            </div>
+        <div class="user-info">
+            <span id="username">@your_username</span>
+            <span id="toshi-counter">0 TOSHI</span>
         </div>
     </header>
+
     <main>
-        <!-- Sezione Menu -->
-        <section id="menu" class="visible">
-            <h1 class="title">Satoshi Circle</h1>
-            <button id="start-button" class="menu-button">Press Start</button>
-            <button id="tasks-button" class="menu-button">Tasks</button>
-            <button id="frens-button" class="menu-button">Frens</button>
+        <section class="play-section">
+            <h2>Tap Game</h2>
+            <div id="coin-container">
+                <img id="coin" src="bitcoin.png" alt="Bitcoin Coin">
+            </div>
+            <div id="tap-info">
+                <progress id="tap-progress" value="0" max="100"></progress>
+                <p id="tap-count">0/100 TOSHI</p>
+            </div>
         </section>
 
-        <!-- Sezione Gioco -->
-        <section id="game" class="hidden">
-            <div id="game-container"></div>
-            <div id="score">Score: 0</div>
-        </section>
-
-        <!-- Sezione Task -->
-        <section id="tasks" class="hidden">
-            <h2>Complete tasks to earn TOSHI</h2>
-            <button id="join-group-button">Join the group - 100 TOSHI</button>
-            <button id="subscribe-channel-button">Subscribe to channel - 200 TOSHI</button>
-        </section>
-
-        <!-- Sezione Frens -->
-        <section id="frens" class="hidden">
-            <h2>Invite Friends</h2>
-            <button id="generate-ref-link-button">Generate Referral Link</button>
-            <div id="referral-link"></div>
+        <section class="task-section">
+            <h2>Task</h2>
+            <button id="join-group" class="task-btn" onclick="completeTask('group')">Join Group (300 TOSHI)</button>
+            <button id="join-channel" class="task-btn" onclick="completeTask('channel')">Join Channel (500 TOSHI)</button>
         </section>
     </main>
-    <script src="game.js"></script>
+
+    <script src="app.js"></script>
 </body>
 </html>
