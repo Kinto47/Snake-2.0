@@ -35,6 +35,14 @@ section {
     display: none;
 }
 
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
 .title {
     font-size: 3em;
     color: #007bff;
@@ -55,10 +63,6 @@ button {
 
 button:hover {
     background-color: #0056b3;
-}
-
-.visible {
-    display: block;
 }
 
 #game-container {
