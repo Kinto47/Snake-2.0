@@ -65,7 +65,7 @@ function onDocumentKeyDown(event) {
     if (keyCode === 40 && direction !== 'UP') direction = 'DOWN';
 }
 
-// Funzione per muovere il serpente e controllare i confini
+// Funzione per muovere il serpente con effetto Pac-Man
 function moveSnake() {
     let newHeadPosition = snake[0].position.clone();
 
@@ -74,13 +74,11 @@ function moveSnake() {
     if (direction === 'RIGHT') newHeadPosition.x += 1;
     if (direction === 'DOWN') newHeadPosition.z += 1;
 
-    // Controllo dei confini
-    if (newHeadPosition.x < -fieldSize / 2 || newHeadPosition.x > fieldSize / 2 ||
-        newHeadPosition.z < -fieldSize / 2 || newHeadPosition.z > fieldSize / 2) {
-        alert('Game Over! You hit the boundary.');
-        location.reload(); // Ricarica il gioco in caso di Game Over
-        return;
-    }
+    // Controllo dei confini in stile Pac-Man
+    if (newHeadPosition.x < -fieldSize / 2) newHeadPosition.x = fieldSize / 2;
+    if (newHeadPosition.x > fieldSize / 2) newHeadPosition.x = -fieldSize / 2;
+    if (newHeadPosition.z < -fieldSize / 2) newHeadPosition.z = fieldSize / 2;
+    if (newHeadPosition.z > fieldSize / 2) newHeadPosition.z = -fieldSize / 2;
 
     // Controlla la collisione con il cibo
     if (newHeadPosition.distanceTo(food.position) < 0.5) {
