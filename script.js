@@ -122,63 +122,7 @@ function resetGame() {
 }
 
 function startGame() {
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById('game').style.display = 'block';
-}
-
-function showTasks() {
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById('tasks').style.display = 'block';
-}
-
-function showFrens() {
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById('frens').style.display = 'block';
-}
-
-function generateRefLink() {
-    let refLink = `https://example.com/ref?user=${username}`;
-    document.getElementById('referral-link').innerText = `Your referral link: ${refLink}`;
-}
-
-function joinGroup() {
-    alert("Joined the group!");
-    toshi += 100;
-    document.getElementById('toshi-count').innerText = `TOSHI: ${toshi}`;
-}
-
-function subscribeChannel() {
-    alert("Subscribed to the channel!");
-    toshi += 200;
-    document.getElementById('toshi-count').innerText = `TOSHI: ${toshi}`;
-}
-
-function saveUserData() {
-    fetch('/save-score', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            username: username,
-            toshi: toshi
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert("Punteggio salvato con successo!");
-        } else {
-            alert("Errore durante il salvataggio del punteggio.");
-        }
-    });
-}
-
-window.addEventListener('beforeunload', saveUserData);
-
-// Event Listeners per i bottoni
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('start-button').addEventListener('click', startGame);
-    document.getElementById('tasks-button').addEventListener('click', showTasks);
-    document.getElementById('frens-button').addEventListener('click', showFrens);
-});
+    document.getElementById('menu').classList.remove('visible');
+    document.getElementById('menu').classList.add('hidden');
+    document.getElementById('game').classList.remove('hidden');
+    document.getElementB
