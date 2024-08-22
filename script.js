@@ -17,6 +17,12 @@ let communityJoined = localStorage.getItem('communityJoined') === 'true';
 let speed = 200; // Velocità iniziale in millisecondi
 let game;
 
+// Variabili per rilevamento del touch
+let startX = 0;
+let startY = 0;
+let endX = 0;
+let endY = 0;
+
 // Aggiorna il punteggio e il bilancio di TOSHI
 document.getElementById('score').innerText = `Score: ${score}`;
 document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
@@ -35,6 +41,37 @@ function setDirection(event) {
 }
 
 document.addEventListener('keydown', setDirection);
+
+// Gestione del touch per Android/iOS
+canvas.addEventListener('touchstart', function(event) {
+    startX = event.touches[0].clientX;
+    startY = event.touches[0].clientY;
+}, false);
+
+canvas.addEventListener('touchmove', function(event) {
+    event.preventDefault();
+    endX = event.touches[0].clientX;
+    endY = event.touches[0].clientY;
+}, false);
+
+canvas.addEventListener('touchend', function() {
+    const diffX = endX - startX;
+    const diffY = endY - startY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0 && direction !== 'LEFT') {
+            direction = 'RIGHT';
+        } else if (diffX < 0 && direction !== 'RIGHT') {
+            direction = 'LEFT';
+        }
+    } else {
+        if (diffY > 0 && direction !== 'UP') {
+            direction = 'DOWN';
+        } else if (diffY < 0 && direction !== 'DOWN') {
+            direction = 'UP';
+        }
+    }
+}, false);
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
