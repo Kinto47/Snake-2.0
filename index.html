@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Game with TOSHI</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
         body {
             margin: 0;
             display: flex;
@@ -12,8 +14,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f8f9fa; /* Sfondo bianco */
-            color: #333; /* Testo grigio scuro */
+            background-color: #f8f9fa;
+            color: #333;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
@@ -23,8 +25,8 @@
             width: 400px;
             margin-bottom: 10px;
             padding: 10px;
-            background-color: #fff; /* Sfondo bianco */
-            color: #333; /* Testo grigio scuro */
+            background-color: #fff;
+            color: #333;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -32,21 +34,25 @@
         canvas {
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: #e9ecef; /* Sfondo grigio chiaro per il canvas */
+            background-color: #e9ecef;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Snake_game_alternate_text.svg/768px-Snake_game_alternate_text.svg.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         .section {
-            display: none; /* Nasconde tutte le sezioni di default */
+            display: none;
             width: 100%;
             max-width: 400px;
         }
 
         .active {
-            display: block; /* Mostra solo la sezione attiva */
+            display: block;
         }
 
         .task-section-content {
-            background-color: #fff; /* Sfondo bianco */
+            background-color: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -77,7 +83,7 @@
             max-width: 400px;
             position: fixed;
             bottom: 20px;
-            background-color: #f8f9fa; /* Sfondo bianco */
+            background-color: #f8f9fa;
             border-radius: 10px;
             padding: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
