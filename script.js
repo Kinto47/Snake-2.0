@@ -6,18 +6,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const joinGroupBtn = document.getElementById('join-group');
     const joinChannelBtn = document.getElementById('join-channel');
     
-    let taps = 100; // Inizia con la barra piena
-    let toshi = 100;
+    let toshi = 0;
+    const maxToshi = 5000;
 
     coin.addEventListener('click', () => {
-        if (taps > 0) {
-            taps--;
+        if (toshi < maxToshi) {
             toshi++;
-            tapProgress.value = taps;
-            tapCount.textContent = `${100 - taps}/100 TOSHI`;
+            tapProgress.value = toshi;
+            tapCount.textContent = `${toshi}/${maxToshi} TOSHI`;
             updateToshiCounter();
         } else {
-            alert('You have reached your daily limit of 100 TOSHI. Come back tomorrow!');
+            alert('You have reached the maximum of 5000 TOSHI.');
         }
     });
 
@@ -27,15 +26,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.completeTask = (task) => {
         if (task === 'group' && !joinGroupBtn.disabled) {
-            toshi += 300;
-            joinGroupBtn.disabled = true;
-            joinGroupBtn.textContent = 'Group Joined (300 TOSHI)';
+            if (toshi + 300 <= maxToshi) {
+                toshi += 300;
+                joinGroupBtn.disabled = true;
+                joinGroupBtn.textContent = 'Group Joined (300 TOSHI)';
+            } else {
+                alert('Completing this task would exceed the 5000 TOSHI limit.');
+            }
         } else if (task === 'channel' && !joinChannelBtn.disabled) {
-            toshi += 500;
-            joinChannelBtn.disabled = true;
-            joinChannelBtn.textContent = 'Channel Joined (500 TOSHI)';
+            if (toshi + 500 <= maxToshi) {
+                toshi += 500;
+                joinChannelBtn.disabled = true;
+                joinChannelBtn.textContent = 'Channel Joined (500 TOSHI)';
+            } else {
+                alert('Completing this task would exceed the 5000 TOSHI limit.');
+            }
         }
         updateToshiCounter();
+        tapProgress.value = toshi;
+        tapCount.textContent = `${toshi}/${maxToshi} TOSHI`;
     }
 
     window.showSection = (section) => {
@@ -49,11 +58,4 @@ document.addEventListener('DOMContentLoaded', () => {
             playSection.classList.remove('active');
         }
     }
-
-    // Reset tap count every 24 hours (pseudo code)
-    // setInterval(() => {
-    //     taps = 100;
-    //     tapProgress.value = taps;
-    //     tapCount.textContent = `${100 - taps}/100 TOSHI`;
-    // }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
 });
