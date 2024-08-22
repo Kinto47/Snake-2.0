@@ -11,7 +11,7 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             height: 100vh;
             background-color: #f8f9fa;
@@ -56,8 +56,29 @@
             background-color: #0056b3;
         }
 
-        #hud, #gameCanvas, .bottom-nav {
-            display: none; /* Nasconde questi elementi fino all'inizio del gioco */
+        #hud {
+            display: none; /* Nasconde l'HUD fino all'inizio del gioco */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        #toshi {
+            font-size: 36px;
+            margin-top: 20px;
+        }
+
+        #score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            display: none; /* Nasconde il canvas fino all'inizio del gioco */
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #e9ecef;
         }
 
         .section {
@@ -140,12 +161,13 @@
     </div>
 
     <div id="hud">
-        <div id="score">Score: 0</div>
         <div id="toshi">TOSHI: 0</div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div id="score">Score: 0</div>
     </div>
     
     <div id="play-section" class="section active">
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <!-- Canvas è già incluso nell'HUD -->
     </div>
     
     <div id="task-section" class="section">
