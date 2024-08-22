@@ -5,8 +5,7 @@ const box = 20; // Dimensione di ogni segmento del serpente e del cibo
 let snake = [];
 snake[0] = { x: 9 * box, y: 10 * box };
 
-let directionX = 0;  // Direzione X del movimento
-let directionY = 0;  // Direzione Y del movimento
+let direction = null;  // Direzione corrente del serpente
 let food = {
     x: Math.floor(Math.random() * 19 + 1) * box,
     y: Math.floor(Math.random() * 19 + 1) * box
@@ -40,17 +39,27 @@ joystick.addEventListener('touchmove', function(event) {
     const offsetY = touch.clientY - joystickCenter.y;
     stick.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
 
-    // Normalizza il movimento per ottenere direzione
-    const magnitude = Math.sqrt(offsetX ** 2 + offsetY ** 2);
-    directionX = offsetX / magnitude;
-    directionY = offsetY / magnitude;
+    // Determina la direzione principale (orizzontale o verticale)
+    if (Math.abs(offsetX) > Math.abs(offsetY)) {
+        // Movimento orizzontale
+        if (offsetX > 0 && direction !== 'LEFT') {
+            direction = 'RIGHT';
+        } else if (offsetX < 0 && direction !== 'RIGHT') {
+            direction = 'LEFT';
+        }
+    } else {
+        // Movimento verticale
+        if (offsetY > 0 && direction !== 'UP') {
+            direction = 'DOWN';
+        } else if (offsetY < 0 && direction !== 'DOWN') {
+            direction = 'UP';
+        }
+    }
 }, false);
 
 joystick.addEventListener('touchend', function() {
     joystickActive = false;
     stick.style.transform = 'translate(0, 0)';
-    directionX = 0;
-    directionY = 0;
 }, false);
 
 function draw() {
@@ -66,8 +75,14 @@ function draw() {
     ctx.fillStyle = 'red';
     ctx.fillRect(food.x, food.y, box, box);
 
-    let snakeX = snake[0].x + directionX * box;
-    let snakeY = snake[0].y + directionY * box;
+    let snakeX = snake[0].x;
+    let snakeY = snake[0].y;
+
+    // Muove il serpente in base alla direzione
+    if (direction === 'LEFT') snakeX -= box;
+    if (direction === 'UP') snakeY -= box;
+    if (direction === 'RIGHT') snakeX += box;
+    if (direction === 'DOWN') snakeY += box;
 
     if (snakeX === food.x && snakeY === food.y) {
         score++;
