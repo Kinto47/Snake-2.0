@@ -144,13 +144,4 @@ document.addEventListener('DOMContentLoaded', function() {
             score += 10;
             document.getElementById('score').innerText = `Score: ${score}`;
             coin.setPosition(Phaser.Math.Between(50, 750), Phaser.Math.Between(50, 550));
-            addToshi(10);
-        }
-
-        function gameOver() {
-            alert(`Game Over! Your final score is ${score}.`);
-            game.destroy(true);
-            showSection('menu');
-        }
-    }
-});
+           
