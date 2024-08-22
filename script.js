@@ -31,14 +31,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Funzione per gestire il gioco
     function startGame() {
-        let snake = [{x: 10, y: 10}];
-        let direction = {x: 0, y: 0};
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let snake = [{ x: 10, y: 10 }];
+        let direction = { x: 0, y: 0 };
         let speed = 200;
-        let food = {x: 15, y: 15};
+        let food = { x: 15, y: 15 };
 
         function gameLoop() {
             // Update Snake position
-            const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
             snake.unshift(head);
 
             // Check if snake eats food
@@ -48,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 toshiEl.textContent = `TOSHI: ${toshi}`;
                 scoreEl.textContent = score;
                 if (score % 3 === 0) {
-                    speed -= 20;
+                    speed = Math.max(50, speed - 20);
                 }
                 generateFood();
             } else {
@@ -58,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check for collisions
             if (head.x < 0 || head.y < 0 || head.x >= 20 || head.y >= 20 || snake.slice(1).some(seg => seg.x === head.x && seg.y === head.y)) {
                 alert("Game Over! Final Score: " + score);
-                saveScore(score);
                 resetGame();
                 return;
             }
@@ -73,16 +75,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function resetGame() {
-            snake = [{x: 10, y: 10}];
-            direction = {x: 0, y: 0};
+            snake = [{ x: 10, y: 10 }];
+            direction = { x: 0, y: 0 };
             speed = 200;
             score = 0;
             scoreEl.textContent = score;
         }
 
         function renderGame() {
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw Snake
@@ -97,18 +97,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function controlSnake(e) {
-            switch(e.key) {
+            switch (e.key) {
                 case "ArrowUp":
-                    direction = {x: 0, y: -1};
+                    if (direction.y === 0) direction = { x: 0, y: -1 };
                     break;
                 case "ArrowDown":
-                    direction = {x: 0, y: 1};
+                    if (direction.y === 0) direction = { x: 0, y: 1 };
                     break;
                 case "ArrowLeft":
-                    direction = {x: -1, y: 0};
+                    if (direction.x === 0) direction = { x: -1, y: 0 };
                     break;
                 case "ArrowRight":
-                    direction = {x: 1, y: 0};
+                    if (direction.x === 0) direction = { x: 1, y: 0 };
                     break;
             }
         }
@@ -116,22 +116,5 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', controlSnake);
         generateFood();
         gameLoop();
-    }
-
-    function saveScore(score) {
-        // Logica per salvare il punteggio sul server tramite API
-        fetch('/save-score', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({username: getUser(), score: score, toshi: toshi}),
-        });
-    }
-
-    function getUser() {
-        // Logica per ottenere lo username dall'oggetto ctx di Telegram
-        // Simulazione:
-        return 'User123';
     }
 });
