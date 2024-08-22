@@ -58,4 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             playSection.classList.remove('active');
         }
     }
+
+    // Show the PLAY section by default
+    showSection('play');
 });
