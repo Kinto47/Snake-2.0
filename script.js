@@ -83,4 +83,70 @@ function draw() {
 
     if (snakeX < 0 || snakeX >= 20 * box || snakeY < 0 || snakeY >= 20 * box || collision(newHead, snake)) {
         clearInterval(game);
-        alert('
+        alert('Game Over! Press OK to restart.');
+        location.reload();
+    }
+
+    snake.unshift(newHead);
+}
+
+function collision(head, array) {
+    for (let i = 0; i < array.length; i++) {
+        if (head.x === array[i].x && head.y === array[i].y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function updateJoinCommunityButton() {
+    const joinCommunityBtn = document.getElementById('joinCommunityBtn');
+    if (communityJoined) {
+        joinCommunityBtn.disabled = true;
+        joinCommunityBtn.innerText = 'You have already joined the community';
+    } else {
+        joinCommunityBtn.disabled = false;
+        joinCommunityBtn.innerText = 'Join the Community and Earn 100 TOSHI';
+    }
+}
+
+updateJoinCommunityButton();
+
+document.getElementById('joinCommunityBtn').addEventListener('click', () => {
+    if (!communityJoined && confirm('Do you want to join the community and earn 100 TOSHI?')) {
+        window.open('https://t.me/thesatoshicircle', '_blank');
+        toshiBalance += 100;
+        localStorage.setItem('toshiBalance', toshiBalance);
+        document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
+        communityJoined = true;
+        localStorage.setItem('communityJoined', 'true');
+        updateJoinCommunityButton();
+        alert('You have earned 100 TOSHI!');
+    }
+});
+
+// Gestione della navigazione tra le sezioni
+const playBtn = document.getElementById('playBtn');
+const taskBtn = document.getElementById('taskBtn');
+
+playBtn.addEventListener('click', () => {
+    document.getElementById('play-section').classList.add('active');
+    document.getElementById('task-section').classList.remove('active');
+    playBtn.classList.add('active');
+    taskBtn.classList.remove('active');
+});
+
+taskBtn.addEventListener('click', () => {
+    document.getElementById('play-section').classList.remove('active');
+    document.getElementById('task-section').classList.add('active');
+    taskBtn.classList.add('active');
+    playBtn.classList.remove('active');
+});
+
+// Gestione del menu di avvio
+document.getElementById('startGameBtn').addEventListener('click', () => {
+    document.getElementById('menu').style.display = 'none'; // Nasconde il menu
+    document.getElementById('hud').style.display = 'flex'; // Mostra l'HUD
+    canvas.style.display = 'block'; // Mostra il canvas di gioco
+    game = setInterval(draw, speed); // Avvia il gioco
+});
