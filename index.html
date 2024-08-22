@@ -10,23 +10,28 @@
     <header>
         <div class="user-info">
             <span id="username">@your_username</span>
-            <span id="toshi-counter">0 TOSHI</span>
+            <span id="toshi-counter">100 TOSHI</span>
         </div>
     </header>
 
+    <nav>
+        <button id="play-button" class="nav-button" onclick="showSection('play')">PLAY</button>
+        <button id="task-button" class="nav-button" onclick="showSection('task')">TASK</button>
+    </nav>
+
     <main>
-        <section class="play-section">
+        <section id="play-section" class="play-section active">
             <h2>Tap Game</h2>
             <div id="coin-container">
                 <img id="coin" src="bitcoin.png" alt="Bitcoin Coin">
             </div>
             <div id="tap-info">
-                <progress id="tap-progress" value="0" max="100"></progress>
-                <p id="tap-count">0/100 TOSHI</p>
+                <progress id="tap-progress" value="100" max="100"></progress>
+                <p id="tap-count">100/100 TOSHI</p>
             </div>
         </section>
 
-        <section class="task-section">
+        <section id="task-section" class="task-section">
             <h2>Task</h2>
             <button id="join-group" class="task-btn" onclick="completeTask('group')">Join Group (300 TOSHI)</button>
             <button id="join-channel" class="task-btn" onclick="completeTask('channel')">Join Channel (500 TOSHI)</button>
