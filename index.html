@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/virtualjoystick@1.0.1"></script> <!-- Plugin per il joystick -->
     <script src="game.js" defer></script>
-    <!-- Link al font pixellato "Press Start 2P" -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -22,12 +21,11 @@
     </header>
     <main>
         <!-- Sezione Menu -->
-        <section id="menu">
+        <section id="menu" class="visible">
             <h1 class="title">Satoshi Circle</h1>
-            <p>Press Start</p>
-            <button id="start-button">Play</button>
-            <button id="tasks-button">Tasks</button>
-            <button id="frens-button">Frens</button>
+            <button id="start-button" class="menu-button">Press Start</button>
+            <button id="tasks-button" class="menu-button">Tasks</button>
+            <button id="frens-button" class="menu-button">Frens</button>
         </section>
 
         <!-- Sezione Gioco -->
