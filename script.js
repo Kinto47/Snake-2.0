@@ -9,15 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
     let toshi = 0;
 
     startButton.addEventListener('click', function() {
+        console.log("Start Button Clicked");
         showSection('game');
         startGame();
     });
 
     tasksButton.addEventListener('click', function() {
+        console.log("Tasks Button Clicked");
         showSection('tasks');
     });
 
     frensButton.addEventListener('click', function() {
+        console.log("Frens Button Clicked");
         showSection('frens');
     });
 
