@@ -80,10 +80,11 @@ function update(time) {
         }
 
         lastMoveTime = time;
-    }
 
-    if (snakeHead.x < 0 || snakeHead.x > 800 || snakeHead.y < 0 || snakeHead.y > 600) {
-        gameOver();
+        // Controllo per uscita dai limiti dello schermo
+        if (snakeHead.x < 0 || snakeHead.x > 800 || snakeHead.y < 0 || snakeHead.y > 600) {
+            gameOver();
+        }
     }
 }
 
@@ -92,6 +93,7 @@ function collectCoin() {
     coin.x = Phaser.Math.Between(10, 790);
     coin.y = Phaser.Math.Between(10, 590);
 
+    // Aumenta la velocità ogni 3 monete raccolte
     if (score % 3 === 0) {
         speed += 10;
         moveInterval = 200 - speed;
@@ -126,7 +128,7 @@ function startGame() {
 
 function showTasks() {
     document.getElementById('menu').classList.add('hidden');
-    document.getElementId('tasks').classList.remove('hidden');
+    document.getElementById('tasks').classList.remove('hidden');
 }
 
 function showFrens() {
