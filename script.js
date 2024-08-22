@@ -1,197 +1,175 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-const box = 20; // Dimensione di ogni segmento del serpente e del cibo
-let snake = [];
-snake[0] = { x: 9 * box, y: 10 * box };
-
-let direction = null;  // Direzione corrente del serpente
-let food = {
-    x: Math.floor(Math.random() * 19 + 1) * box,
-    y: Math.floor(Math.random() * 19 + 1) * box
+const config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    backgroundColor: '#ffffff',
+    parent: 'game-container',
+    scene: {
+        preload: preload,
+        create: create,
+        update: update
+    }
 };
 
+let game = new Phaser.Game(config);
+let snake;
+let coin;
+let cursors;
 let score = 0;
-let toshiBalance = parseInt(localStorage.getItem('toshiBalance')) || 0;
-let communityJoined = localStorage.getItem('communityJoined') === 'true';
-let speed = 200; // Velocità iniziale in millisecondi
-let game;
+let speed = 100;
+let username = "Username"; // Popolato dinamicamente
+let toshi = 0;
+let direction = 'right';
+let joystick;
+let lastMoveTime = 0;
+let moveInterval = 200;
 
-document.getElementById('score').innerText = `Score: ${score}`;
-document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
-
-// Joystick setup
-const joystick = document.getElementById('joystick');
-const stick = document.querySelector('#joystick .stick');
-let joystickActive = false;
-let joystickCenter = { x: 0, y: 0 };
-
-joystick.addEventListener('touchstart', function(event) {
-    joystickActive = true;
-    const touch = event.touches[0];
-    joystickCenter = { x: touch.clientX, y: touch.clientY };
-}, false);
-
-joystick.addEventListener('touchmove', function(event) {
-    if (!joystickActive) return;
-    const touch = event.touches[0];
-    const offsetX = touch.clientX - joystickCenter.x;
-    const offsetY = touch.clientY - joystickCenter.y;
-    stick.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-
-    // Determina la direzione principale (orizzontale o verticale)
-    if (Math.abs(offsetX) > Math.abs(offsetY)) {
-        // Movimento orizzontale
-        if (offsetX > 0 && direction !== 'LEFT') {
-            direction = 'RIGHT';
-        } else if (offsetX < 0 && direction !== 'RIGHT') {
-            direction = 'LEFT';
-        }
-    } else {
-        // Movimento verticale
-        if (offsetY > 0 && direction !== 'UP') {
-            direction = 'DOWN';
-        } else if (offsetY < 0 && direction !== 'DOWN') {
-            direction = 'UP';
-        }
-    }
-}, false);
-
-joystick.addEventListener('touchend', function() {
-    joystickActive = false;
-    stick.style.transform = 'translate(0, 0)';
-}, false);
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (let i = 0; i < snake.length; i++) {
-        ctx.fillStyle = (i === 0) ? '#00ff00' : '#ffffff';
-        ctx.fillRect(snake[i].x, snake[i].y, box, box);
-        ctx.strokeStyle = '#000';
-        ctx.strokeRect(snake[i].x, snake[i].y, box, box);
-    }
-
-    ctx.fillStyle = 'red';
-    ctx.fillRect(food.x, food.y, box, box);
-
-    let snakeX = snake[0].x;
-    let snakeY = snake[0].y;
-
-    // Muove il serpente in base alla direzione
-    if (direction === 'LEFT') snakeX -= box;
-    if (direction === 'UP') snakeY -= box;
-    if (direction === 'RIGHT') snakeX += box;
-    if (direction === 'DOWN') snakeX += box;
-
-    if (snakeX === food.x && snakeY === food.y) {
-        score++;
-        toshiBalance += 1; // Assegna 1 TOSHI per ogni punto
-        document.getElementById('score').innerText = `Score: ${score}`;
-        document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
-        localStorage.setItem('toshiBalance', toshiBalance);
-
-        food = {
-            x: Math.floor(Math.random() * 19 + 1) * box,
-            y: Math.floor(Math.random() * 19 + 1) * box
-        };
-
-        // Aumenta la velocità ogni 10 punti
-        if (score % 10 === 0) {
-            clearInterval(game);
-            speed -= 20; // Riduce il tempo di intervallo, aumentando la velocità
-            game = setInterval(draw, speed);
-        }
-    } else {
-        snake.pop();
-    }
-
-    const newHead = { x: snakeX, y: snakeY };
-
-    if (snakeX < 0 || snakeX >= 20 * box || snakeY < 0 || snakeY >= 20 * box || collision(newHead, snake)) {
-        clearInterval(game);
-        alert('Game Over! Press OK to restart.');
-        location.reload();
-    }
-
-    snake.unshift(newHead);
+function preload() {
+    this.load.image('satoshi', 'satoshi.png');
+    this.load.image('coin', 'bitcoin.png');
 }
 
-function collision(head, array) {
-    for (let i = 0; i < array.length; i++) {
-        if (head.x === array[i].x && head.y === array[i].y) {
-            return true;
+function create() {
+    snake = this.physics.add.group();
+    let startX = Phaser.Math.Between(10, 600);
+    let startY = Phaser.Math.Between(10, 400);
+    snake.create(startX, startY, 'satoshi');
+
+    coin = this.physics.add.image(Phaser.Math.Between(10, 790), Phaser.Math.Between(10, 590), 'coin');
+
+    cursors = this.input.keyboard.createCursorKeys();
+    this.physics.add.collider(snake, coin, collectCoin, null, this);
+
+    // Creazione del joystick virtuale
+    joystick = new VirtualJoystick.VirtualJoystick({
+        container: document.getElementById('joystick-container'),
+        mouseSupport: true,
+        stationaryBase: true,
+        baseX: 100,
+        baseY: 100,
+        limitStickTravel: true,
+        stickRadius: 50
+    });
+
+    joystick.addEventListener('touchMove', function(event) {
+        if (Math.abs(event.x) > Math.abs(event.y)) {
+            direction = event.x > 0 ? 'right' : 'left';
+        } else {
+            direction = event.y > 0 ? 'down' : 'up';
         }
-    }
-    return false;
+    });
 }
 
-function updateJoinCommunityButton() {
-    const joinCommunityBtn = document.getElementById('joinCommunityBtn');
-    if (communityJoined) {
-        joinCommunityBtn.disabled = true;
-        joinCommunityBtn.innerText = 'You have already joined the community';
-    } else {
-        joinCommunityBtn.disabled = false;
-        joinCommunityBtn.innerText = 'Join the Community and Earn 100 TOSHI';
+function update(time) {
+    if (time >= lastMoveTime + moveInterval) {
+        let snakeHead = snake.getChildren()[0];
+
+        switch(direction) {
+            case 'left':
+                snakeHead.x -= 10;
+                break;
+            case 'right':
+                snakeHead.x += 10;
+                break;
+            case 'up':
+                snakeHead.y -= 10;
+                break;
+            case 'down':
+                snakeHead.y += 10;
+                break;
+        }
+
+        lastMoveTime = time;
+    }
+
+    if (snakeHead.x < 0 || snakeHead.x > 800 || snakeHead.y < 0 || snakeHead.y > 600) {
+        gameOver();
     }
 }
 
-updateJoinCommunityButton();
+function collectCoin() {
+    score += 1;
+    coin.x = Phaser.Math.Between(10, 790);
+    coin.y = Phaser.Math.Between(10, 590);
 
-document.getElementById('joinCommunityBtn').addEventListener('click', () => {
-    if (!communityJoined && confirm('Do you want to join the community and earn 100 TOSHI?')) {
-        window.open('https://t.me/thesatoshicircle', '_blank');
-        toshiBalance += 100;
-        localStorage.setItem('toshiBalance', toshiBalance);
-        document.getElementById('toshi').innerText = `TOSHI: ${toshiBalance}`;
-        communityJoined = true;
-        localStorage.setItem('communityJoined', 'true');
-        updateJoinCommunityButton();
-        alert('You have earned 100 TOSHI!');
+    if (score % 3 === 0) {
+        speed += 10;
+        moveInterval = 200 - speed;
     }
-});
 
-// Gestione della navigazione tra le sezioni
-const playBtn = document.getElementById('playBtn');
-const taskBtn = document.getElementById('taskBtn');
-const menu = document.getElementById('menu');
-const hud = document.getElementById('hud');
-const playSection = document.getElementById('play-section');
-const taskSection = document.getElementById('task-section');
-const gameCanvas = document.getElementById('gameCanvas');
-const bottomNav = document.querySelector('.bottom-nav');
+    document.getElementById('score').innerText = `Score: ${score}`;
+    toshi += 10;
+    document.getElementById('toshi-count').innerText = `TOSHI: ${toshi}`;
+}
 
-playBtn.addEventListener('click', () => {
-    menu.style.display = 'none'; // Nasconde il menu se si passa al gioco
-    taskSection.style.display = 'none'; // Nasconde la sezione Task
-    playSection.style.display = 'block'; // Mostra la sezione Play
-    taskBtn.classList.remove('active');
-    playBtn.classList.add('active');
-    hud.style.display = 'flex'; // Mostra l'HUD
-    gameCanvas.style.display = 'block'; // Mostra il canvas di gioco
-    joystick.style.display = 'block'; // Mostra il joystick
-});
+function gameOver() {
+    alert('Game Over! Your score is ' + score);
+    saveUserData();
+    resetGame();
+}
 
-taskBtn.addEventListener('click', () => {
-    menu.style.display = 'none'; // Nasconde il menu se si passa alla task
-    playSection.style.display = 'none'; // Nasconde la sezione Play
-    taskSection.style.display = 'block'; // Mostra la sezione Task
-    playBtn.classList.remove('active');
-    taskBtn.classList.add('active');
-    hud.style.display = 'none'; // Nasconde l'HUD
-    gameCanvas.style.display = 'none'; // Nasconde il canvas di gioco
-    joystick.style.display = 'none'; // Nasconde il joystick
-});
+function resetGame() {
+    score = 0;
+    speed = 100;
+    moveInterval = 200;
+    snake.clear(true, true);
+    let startX = Phaser.Math.Between(10, 600);
+    let startY = Phaser.Math.Between(10, 400);
+    snake.create(startX, startY, 'satoshi');
+    document.getElementById('score').innerText = `Score: 0`;
+}
 
-// Gestione del menu di avvio
-document.getElementById('startGameBtn').addEventListener('click', () => {
-    menu.style.display = 'none'; // Nasconde il menu
-    hud.style.display = 'flex'; // Mostra l'HUD
-    playSection.style.display = 'block'; // Mostra la sezione Play
-    taskSection.style.display = 'none'; // Nasconde la sezione Task
-    gameCanvas.style.display = 'block'; // Mostra il canvas di gioco
-    joystick.style.display = 'block'; // Mostra il joystick
-    bottomNav.style.display = 'flex'; // Mostra la navigazione in basso
-    game = setInterval(draw, speed); // Avvia il gioco
-});
+function startGame() {
+    document.getElementById('menu').classList.add('hidden');
+    document.getElementById('game').classList.remove('hidden');
+}
+
+function showTasks() {
+    document.getElementById('menu').classList.add('hidden');
+    document.getElementById('tasks').classList.remove('hidden');
+}
+
+function showFrens() {
+    document.getElementById('menu').classList.add('hidden');
+    document.getElementById('frens').classList.remove('hidden');
+}
+
+function generateRefLink() {
+    let refLink = `https://example.com/ref?user=${username}`;
+    document.getElementById('referral-link').innerText = `Your referral link: ${refLink}`;
+}
+
+function joinGroup() {
+    alert("Joined the group!");
+    toshi += 100;
+    document.getElementById('toshi-count').innerText = `TOSHI: ${toshi}`;
+}
+
+function subscribeChannel() {
+    alert("Subscribed to the channel!");
+    toshi += 200;
+    document.getElementById('toshi-count').innerText = `TOSHI: ${toshi}`;
+}
+
+function saveUserData() {
+    fetch('/save-score', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: username,
+            toshi: toshi
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Punteggio salvato con successo!");
+        } else {
+            alert("Errore durante il salvataggio del punteggio.");
+        }
+    });
+}
+
+window.addEventListener('beforeunload', saveUserData);
