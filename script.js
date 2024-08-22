@@ -82,7 +82,7 @@ function draw() {
     if (direction === 'LEFT') snakeX -= box;
     if (direction === 'UP') snakeY -= box;
     if (direction === 'RIGHT') snakeX += box;
-    if (direction === 'DOWN') snakeY += box;
+    if (direction === 'DOWN') snakeX += box;
 
     if (snakeX === food.x && snakeY === food.y) {
         score++;
@@ -164,8 +164,8 @@ const bottomNav = document.querySelector('.bottom-nav');
 
 playBtn.addEventListener('click', () => {
     menu.style.display = 'none'; // Nasconde il menu se si passa al gioco
-    taskSection.classList.remove('active');
-    playSection.classList.add('active');
+    taskSection.style.display = 'none'; // Nasconde la sezione Task
+    playSection.style.display = 'block'; // Mostra la sezione Play
     taskBtn.classList.remove('active');
     playBtn.classList.add('active');
     hud.style.display = 'flex'; // Mostra l'HUD
@@ -175,20 +175,21 @@ playBtn.addEventListener('click', () => {
 
 taskBtn.addEventListener('click', () => {
     menu.style.display = 'none'; // Nasconde il menu se si passa alla task
-    playSection.classList.remove('active');
-    taskSection.classList.add('active');
+    playSection.style.display = 'none'; // Nasconde la sezione Play
+    taskSection.style.display = 'block'; // Mostra la sezione Task
     playBtn.classList.remove('active');
     taskBtn.classList.add('active');
     hud.style.display = 'none'; // Nasconde l'HUD
     gameCanvas.style.display = 'none'; // Nasconde il canvas di gioco
     joystick.style.display = 'none'; // Nasconde il joystick
-    bottomNav.style.display = 'flex'; // Mostra la navigazione in basso
 });
 
 // Gestione del menu di avvio
 document.getElementById('startGameBtn').addEventListener('click', () => {
     menu.style.display = 'none'; // Nasconde il menu
     hud.style.display = 'flex'; // Mostra l'HUD
+    playSection.style.display = 'block'; // Mostra la sezione Play
+    taskSection.style.display = 'none'; // Nasconde la sezione Task
     gameCanvas.style.display = 'block'; // Mostra il canvas di gioco
     joystick.style.display = 'block'; // Mostra il joystick
     bottomNav.style.display = 'flex'; // Mostra la navigazione in basso
