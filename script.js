@@ -1,64 +1,137 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const tapProgress = document.getElementById('tap-progress');
-    const tapCount = document.getElementById('tap-count');
-    const toshiCounter = document.getElementById('toshi-counter');
-    const coin = document.getElementById('coin');
-    const joinGroupBtn = document.getElementById('join-group');
-    const joinChannelBtn = document.getElementById('join-channel');
-    
-    let toshi = 0;
-    const maxToshi = 5000;
+    const gameBtn = document.getElementById('game-btn');
+    const taskBtn = document.getElementById('task-btn');
+    const gameSection = document.getElementById('game-section');
+    const taskSection = document.getElementById('task-section');
+    const menu = document.querySelector('.menu');
+    const startBtn = document.getElementById('start-btn');
+    const scoreEl = document.getElementById('score');
+    const toshiEl = document.getElementById('toshi');
 
-    coin.addEventListener('click', () => {
-        if (toshi < maxToshi) {
-            toshi++;
-            tapProgress.value = toshi;
-            tapCount.textContent = `${toshi}/${maxToshi} TOSHI`;
-            updateToshiCounter();
-        } else {
-            alert('You have reached the maximum of 5000 TOSHI.');
-        }
+    let score = 0;
+    let toshi = 0;
+
+    // Funzioni per il cambio di sezione
+    gameBtn.addEventListener('click', () => {
+        menu.classList.add('hidden');
+        taskSection.classList.add('hidden');
+        gameSection.classList.remove('hidden');
     });
 
-    function updateToshiCounter() {
-        toshiCounter.textContent = `${toshi} TOSHI`;
-    }
+    taskBtn.addEventListener('click', () => {
+        menu.classList.add('hidden');
+        gameSection.classList.add('hidden');
+        taskSection.classList.remove('hidden');
+    });
 
-    window.completeTask = (task) => {
-        if (task === 'group' && !joinGroupBtn.disabled) {
-            if (toshi + 300 <= maxToshi) {
-                toshi += 300;
-                joinGroupBtn.disabled = true;
-                joinGroupBtn.textContent = 'Group Joined (300 TOSHI)';
+    // Funzione per iniziare il gioco
+    startBtn.addEventListener('click', () => {
+        startGame();
+    });
+
+    // Funzione per gestire il gioco
+    function startGame() {
+        let snake = [{x: 10, y: 10}];
+        let direction = {x: 0, y: 0};
+        let speed = 200;
+        let food = {x: 15, y: 15};
+
+        function gameLoop() {
+            // Update Snake position
+            const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+            snake.unshift(head);
+
+            // Check if snake eats food
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                toshi += 10;
+                toshiEl.textContent = `TOSHI: ${toshi}`;
+                scoreEl.textContent = score;
+                if (score % 3 === 0) {
+                    speed -= 20;
+                }
+                generateFood();
             } else {
-                alert('Completing this task would exceed the 5000 TOSHI limit.');
+                snake.pop();
             }
-        } else if (task === 'channel' && !joinChannelBtn.disabled) {
-            if (toshi + 500 <= maxToshi) {
-                toshi += 500;
-                joinChannelBtn.disabled = true;
-                joinChannelBtn.textContent = 'Channel Joined (500 TOSHI)';
-            } else {
-                alert('Completing this task would exceed the 5000 TOSHI limit.');
+
+            // Check for collisions
+            if (head.x < 0 || head.y < 0 || head.x >= 20 || head.y >= 20 || snake.slice(1).some(seg => seg.x === head.x && seg.y === head.y)) {
+                alert("Game Over! Final Score: " + score);
+                saveScore(score);
+                resetGame();
+                return;
+            }
+
+            renderGame();
+            setTimeout(gameLoop, speed);
+        }
+
+        function generateFood() {
+            food.x = Math.floor(Math.random() * 20);
+            food.y = Math.floor(Math.random() * 20);
+        }
+
+        function resetGame() {
+            snake = [{x: 10, y: 10}];
+            direction = {x: 0, y: 0};
+            speed = 200;
+            score = 0;
+            scoreEl.textContent = score;
+        }
+
+        function renderGame() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Snake
+            ctx.fillStyle = 'orange';
+            snake.forEach(segment => {
+                ctx.fillRect(segment.x * 20, segment.y * 20, 20, 20);
+            });
+
+            // Draw Food
+            ctx.fillStyle = 'green';
+            ctx.fillRect(food.x * 20, food.y * 20, 20, 20);
+        }
+
+        function controlSnake(e) {
+            switch(e.key) {
+                case "ArrowUp":
+                    direction = {x: 0, y: -1};
+                    break;
+                case "ArrowDown":
+                    direction = {x: 0, y: 1};
+                    break;
+                case "ArrowLeft":
+                    direction = {x: -1, y: 0};
+                    break;
+                case "ArrowRight":
+                    direction = {x: 1, y: 0};
+                    break;
             }
         }
-        updateToshiCounter();
-        tapProgress.value = toshi;
-        tapCount.textContent = `${toshi}/${maxToshi} TOSHI`;
+
+        document.addEventListener('keydown', controlSnake);
+        generateFood();
+        gameLoop();
     }
 
-    window.showSection = (section) => {
-        const playSection = document.getElementById('play-section');
-        const taskSection = document.getElementById('task-section');
-        if (section === 'play') {
-            playSection.classList.add('active');
-            taskSection.classList.remove('active');
-        } else if (section === 'task') {
-            taskSection.classList.add('active');
-            playSection.classList.remove('active');
-        }
+    function saveScore(score) {
+        // Logica per salvare il punteggio sul server tramite API
+        fetch('/save-score', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({username: getUser(), score: score, toshi: toshi}),
+        });
     }
 
-    // Show the PLAY section by default
-    showSection('play');
+    function getUser() {
+        // Logica per ottenere lo username dall'oggetto ctx di Telegram
+        // Simulazione:
+        return 'User123';
+    }
 });
