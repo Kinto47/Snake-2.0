@@ -24,6 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
         taskSection.classList.remove('hidden');
     });
 
+    // Funzione per collegare i bottoni delle task ai link
+    document.getElementById('join-group').addEventListener('click', () => {
+        window.open('https://t.me/thesatoshicircle', '_blank');
+    });
+
+    document.getElementById('subscribe-channel').addEventListener('click', () => {
+        window.open('https://t.me/thesatoshicircle_news', '_blank');
+    });
+
     // Funzione per iniziare il gioco
     startBtn.addEventListener('click', () => {
         startGame();
