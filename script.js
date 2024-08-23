@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('subscribe-channel').addEventListener('click', () => {
-        window.open('https://t.me/thesatoshicircle_news', '_blank');
+        window.open('https://t.me/thesatoshicirclenews', '_blank');
     });
 
     // Funzione per iniziare il gioco
