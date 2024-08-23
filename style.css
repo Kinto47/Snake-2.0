@@ -77,3 +77,24 @@ body {
 .dir-btn:hover {
     background-color: #555;
 }
+
+.task {
+    margin-bottom: 20px;
+}
+
+.task p {
+    margin: 0;
+}
+
+.task-btn {
+    background-color: #222;
+    border: 1px solid #444;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.task-btn:hover {
+    background-color: #555;
+}
