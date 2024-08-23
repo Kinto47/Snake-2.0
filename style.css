@@ -47,7 +47,15 @@ body {
     display: none;
 }
 
-.hidden {
+#play-section.hidden,
+#tasks-section.hidden,
+#profile-section.hidden {
+    display: none;
+}
+
+#play-section,
+#tasks-section,
+#profile-section {
     display: none;
 }
 
