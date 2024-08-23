@@ -1,129 +1,143 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const gameBtn = document.getElementById('game-btn');
-    const taskBtn = document.getElementById('task-btn');
-    const gameSection = document.getElementById('game-section');
-    const taskSection = document.getElementById('task-section');
-    const menu = document.querySelector('.menu');
-    const startBtn = document.getElementById('start-btn');
-    const scoreEl = document.getElementById('score');
-    const toshiEl = document.getElementById('toshi');
+document.addEventListener("DOMContentLoaded", () => {
+    let balance = 0;
+    const username = "YourTelegramUsername";  // Questo dovrà essere ottenuto dal bot Telegram.
+    const snakeGameCanvas = document.getElementById("snake-game");
+    const ctx = snakeGameCanvas.getContext("2d");
+    const balanceDisplay = document.getElementById("balance");
+    const profileBalanceDisplay = document.getElementById("profile-balance");
+    const profileUsernameDisplay = document.getElementById("profile-username");
 
-    let score = 0;
-    let toshi = 0;
+    // Set username
+    document.getElementById("username").textContent = username;
+    profileUsernameDisplay.textContent = username;
 
-    // Funzioni per il cambio di sezione
-    gameBtn.addEventListener('click', () => {
-        menu.classList.add('hidden');
-        taskSection.classList.add('hidden');
-        gameSection.classList.remove('hidden');
+    // Sections
+    const playSection = document.getElementById("play-section");
+    const tasksSection = document.getElementById("tasks-section");
+    const profileSection = document.getElementById("profile-section");
+
+    // Buttons
+    document.getElementById("play-btn").addEventListener("click", () => {
+        showSection(playSection);
     });
 
-    taskBtn.addEventListener('click', () => {
-        menu.classList.add('hidden');
-        gameSection.classList.add('hidden');
-        taskSection.classList.remove('hidden');
+    document.getElementById("tasks-btn").addEventListener("click", () => {
+        showSection(tasksSection);
     });
 
-    // Funzione per collegare i bottoni delle task ai link
-    document.getElementById('join-group').addEventListener('click', () => {
-        window.open('https://t.me/thesatoshicircle', '_blank');
+    document.getElementById("profile-btn").addEventListener("click", () => {
+        showSection(profileSection);
     });
 
-    document.getElementById('subscribe-channel').addEventListener('click', () => {
-        window.open('https://t.me/thesatoshicirclenews', '_blank');
+    // Joystick controls
+    let direction = "right";  // default direction
+    document.getElementById("up").addEventListener("click", () => {
+        direction = "up";
     });
 
-    // Funzione per iniziare il gioco
-    startBtn.addEventListener('click', () => {
-        startGame();
+    document.getElementById("down").addEventListener("click", () => {
+        direction = "down";
     });
 
-    // Funzione per gestire il gioco
-    function startGame() {
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+    document.getElementById("left").addEventListener("click", () => {
+        direction = "left";
+    });
 
-        let snake = [{ x: 10, y: 10 }];
-        let direction = { x: 0, y: 0 };
-        let speed = 200;
-        let food = { x: 15, y: 15 };
+    document.getElementById("right").addEventListener("click", () => {
+        direction = "right";
+    });
 
-        function gameLoop() {
-            // Update Snake position
-            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-            snake.unshift(head);
+    // Tasks
+    document.getElementById("join-group").addEventListener("click", () => {
+        rewardToshi(300);
+    });
 
-            // Check if snake eats food
-            if (head.x === food.x && head.y === food.y) {
-                score++;
-                toshi += 10;
-                toshiEl.textContent = `TOSHI: ${toshi}`;
-                scoreEl.textContent = score;
-                if (score % 3 === 0) {
-                    speed = Math.max(50, speed - 20);
-                }
-                generateFood();
-            } else {
-                snake.pop();
-            }
+    document.getElementById("join-channel").addEventListener("click", () => {
+        rewardToshi(500);
+    });
 
-            // Check for collisions
-            if (head.x < 0 || head.y < 0 || head.x >= 20 || head.y >= 20 || snake.slice(1).some(seg => seg.x === head.x && seg.y === head.y)) {
-                alert("Game Over! Final Score: " + score);
-                resetGame();
-                return;
-            }
-
-            renderGame();
-            setTimeout(gameLoop, speed);
-        }
-
-        function generateFood() {
-            food.x = Math.floor(Math.random() * 20);
-            food.y = Math.floor(Math.random() * 20);
-        }
-
-        function resetGame() {
-            snake = [{ x: 10, y: 10 }];
-            direction = { x: 0, y: 0 };
-            speed = 200;
-            score = 0;
-            scoreEl.textContent = score;
-        }
-
-        function renderGame() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw Snake
-            ctx.fillStyle = 'orange';
-            snake.forEach(segment => {
-                ctx.fillRect(segment.x * 20, segment.y * 20, 20, 20);
-            });
-
-            // Draw Food
-            ctx.fillStyle = 'green';
-            ctx.fillRect(food.x * 20, food.y * 20, 20, 20);
-        }
-
-        function controlSnake(e) {
-            switch (e.key) {
-                case "ArrowUp":
-                    if (direction.y === 0) direction = { x: 0, y: -1 };
-                    break;
-                case "ArrowDown":
-                    if (direction.y === 0) direction = { x: 0, y: 1 };
-                    break;
-                case "ArrowLeft":
-                    if (direction.x === 0) direction = { x: -1, y: 0 };
-                    break;
-                case "ArrowRight":
-                    if (direction.x === 0) direction = { x: 1, y: 0 };
-                    break;
-            }
-        }
-
-        document.addEventListener('keydown', controlSnake);
-        generateFood();
-        gameLoop();
+    // Function to display sections
+    function showSection(section) {
+        playSection.classList.add("hidden");
+        tasksSection.classList.add("hidden");
+        profileSection.classList.add("hidden");
+        section.classList.remove("hidden");
     }
+
+    // Function to update balance
+    function rewardToshi(amount) {
+        balance += amount;
+        balanceDisplay.textContent = balance;
+        profileBalanceDisplay.textContent = balance;
+    }
+
+    // Snake Game Logic
+    const snakeSize = 10;
+    let snake = [{x: 50, y: 50}];
+    let food = {x: 100, y: 100};
+    let gameInterval;
+
+    function drawSnake() {
+        ctx.clearRect(0, 0, snakeGameCanvas.width, snakeGameCanvas.height);
+        ctx.fillStyle = "lime";
+        snake.forEach(part => {
+            ctx.fillRect(part.x, part.y, snakeSize, snakeSize);
+        });
+        ctx.fillStyle = "red";
+        ctx.fillRect(food.x, food.y, snakeSize, snakeSize);
+    }
+
+    function moveSnake() {
+        let head = { ...snake[0] };
+        if (direction === "up") head.y -= snakeSize;
+        if (direction === "down") head.y += snakeSize;
+        if (direction === "left") head.x -= snakeSize;
+        if (direction === "right") head.x += snakeSize;
+
+        // Check for collision with walls
+        if (head.x < 0 || head.y < 0 || head.x >= snakeGameCanvas.width || head.y >= snakeGameCanvas.height) {
+            clearInterval(gameInterval);
+            alert("Game Over");
+            snake = [{x: 50, y: 50}];
+            direction = "right";
+            return;
+        }
+
+        // Check for collision with itself
+        if (snake.some(part => part.x === head.x && part.y === head.y)) {
+            clearInterval(gameInterval);
+            alert("Game Over");
+            snake = [{x: 50, y: 50}];
+            direction = "right";
+            return;
+        }
+
+        snake.unshift(head);
+
+        // Check for collision with food
+        if (head.x === food.x && head.y === food.y) {
+            rewardToshi(10);  // Add 10 TOSHI for each food eaten
+            generateFood();
+        } else {
+            snake.pop();
+        }
+
+        drawSnake();
+    }
+
+    function generateFood() {
+        food.x = Math.floor(Math.random() * (snakeGameCanvas.width / snakeSize)) * snakeSize;
+        food.y = Math.floor(Math.random() * (snakeGameCanvas.height / snakeSize)) * snakeSize;
+    }
+
+    function startGame() {
+        gameInterval = setInterval(moveSnake, 100);
+    }
+
+    // Start the game when entering the PLAY section
+    document.getElementById("play-btn").addEventListener("click", startGame);
+
+    // Initialize with the PLAY section visible
+    showSection(playSection);
+    startGame();
 });
