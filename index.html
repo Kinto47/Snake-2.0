@@ -26,6 +26,16 @@
         <button class="task-btn" id="join-group">Join the group (100 TOSHI)</button>
         <button class="task-btn" id="subscribe-channel">Subscribe to the channel (200 TOSHI)</button>
     </div>
-    <script src="script.js"></script>
+
+<script>
+    // Passiamo l'username al frontend come variabile JS
+    const username = "${username}";
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('username').textContent = username;
+    });
+</script>
+
+    
+<script src="script.js"></script>
 </body>
 </html>
