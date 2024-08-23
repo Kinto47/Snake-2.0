@@ -19,32 +19,35 @@ document.addEventListener("DOMContentLoaded", () => {
     // Buttons
     document.getElementById("play-btn").addEventListener("click", () => {
         showSection(playSection);
+        startGame();  // Start the game when PLAY section is shown
     });
 
     document.getElementById("tasks-btn").addEventListener("click", () => {
         showSection(tasksSection);
+        stopGame();  // Stop the game when leaving PLAY section
     });
 
     document.getElementById("profile-btn").addEventListener("click", () => {
         showSection(profileSection);
+        stopGame();  // Stop the game when leaving PLAY section
     });
 
     // Joystick controls
     let direction = "right";  // default direction
     document.getElementById("up").addEventListener("click", () => {
-        direction = "up";
+        if (direction !== "down") direction = "up";
     });
 
     document.getElementById("down").addEventListener("click", () => {
-        direction = "down";
+        if (direction !== "up") direction = "down";
     });
 
     document.getElementById("left").addEventListener("click", () => {
-        direction = "left";
+        if (direction !== "right") direction = "left";
     });
 
     document.getElementById("right").addEventListener("click", () => {
-        direction = "right";
+        if (direction !== "left") direction = "right";
     });
 
     // Tasks
@@ -98,8 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (head.x < 0 || head.y < 0 || head.x >= snakeGameCanvas.width || head.y >= snakeGameCanvas.height) {
             clearInterval(gameInterval);
             alert("Game Over");
-            snake = [{x: 50, y: 50}];
-            direction = "right";
+            resetGame();
             return;
         }
 
@@ -107,8 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (snake.some(part => part.x === head.x && part.y === head.y)) {
             clearInterval(gameInterval);
             alert("Game Over");
-            snake = [{x: 50, y: 50}];
-            direction = "right";
+            resetGame();
             return;
         }
 
@@ -131,13 +132,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function startGame() {
+        resetGame();
         gameInterval = setInterval(moveSnake, 100);
     }
 
-    // Start the game when entering the PLAY section
-    document.getElementById("play-btn").addEventListener("click", startGame);
+    function stopGame() {
+        clearInterval(gameInterval);
+    }
+
+    function resetGame() {
+        snake = [{x: 50, y: 50}];
+        direction = "right";
+        generateFood();
+        drawSnake();
+    }
 
     // Initialize with the PLAY section visible
     showSection(playSection);
-    startGame();
 });
