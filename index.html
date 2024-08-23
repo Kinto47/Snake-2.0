@@ -1,41 +1,51 @@
-am<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satoshi Circle</title>
+    <title>Satoshi Circle Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="header">
-        <span id="username">username</span>
-        <span id="toshi">TOSHI: 0</span>
+    <div class="navbar">
+        <div class="balance">
+            Toshi Balance: <span id="balance">0</span>
+        </div>
+        <div class="username">
+            <span id="username">Username</span>
+        </div>
     </div>
-    <div class="menu">
-        <h1 class="title">Satoshi Circle</h1>
-        <button class="menu-btn" id="game-btn">Game</button>
-        <button class="menu-btn" id="task-btn">Tasks</button>
+    <div class="container">
+        <div class="sidebar">
+            <button id="play-btn">PLAY</button>
+            <button id="tasks-btn">TASKS</button>
+            <button id="profile-btn">PROFILE</button>
+        </div>
+        <div class="content">
+            <!-- PLAY Section -->
+            <div id="play-section" class="section hidden">
+                <canvas id="snake-game"></canvas>
+                <div id="joystick">
+                    <button class="dir-btn" id="up">↑</button><br>
+                    <button class="dir-btn" id="left">←</button>
+                    <button class="dir-btn" id="down">↓</button>
+                    <button class="dir-btn" id="right">→</button>
+                </div>
+            </div>
+            <!-- TASKS Section -->
+            <div id="tasks-section" class="section hidden">
+                <h2>Tasks</h2>
+                <button class="task-btn" id="join-group">JOIN GROUP - 300 TOSHI</button>
+                <button class="task-btn" id="join-channel">JOIN CHANNEL - 500 TOSHI</button>
+            </div>
+            <!-- PROFILE Section -->
+            <div id="profile-section" class="section hidden">
+                <h2>Profile</h2>
+                <p>Username: <span id="profile-username">Username</span></p>
+                <p>Balance: <span id="profile-balance">0</span> TOSHI</p>
+            </div>
+        </div>
     </div>
-    <div class="game-section hidden" id="game-section">
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
-        <div class="score">Score: <span id="score">0</span></div>
-        <button id="start-btn">Press Start</button>
-    </div>
-    <div class="task-section hidden" id="task-section">
-        <h2>Complete Tasks</h2>
-        <button class="task-btn" id="join-group">Join the group (100 TOSHI)</button>
-        <button class="task-btn" id="subscribe-channel">Subscribe to the channel (200 TOSHI)</button>
-    </div>
-
-<script>
-    // Passiamo l'username al frontend come variabile JS
-    const username = "${username}";
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('username').textContent = username;
-    });
-</script>
-
-    
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
