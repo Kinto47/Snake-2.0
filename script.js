@@ -151,4 +151,24 @@ document.addEventListener("DOMContentLoaded", () => {
     showSection(playSection);
 });
 
-window.Telegram.WebApp.ready(); 
+// Verifica che window.Telegram.WebApp sia disponibile
+if (window.Telegram.WebApp) {
+    // Inizializza l'oggetto Telegram WebApp
+    const tg = window.Telegram.WebApp;
+
+    // Notifica a Telegram che la Web App è pronta
+    tg.ready();
+
+    // Esempio: Impostazione del tema
+    const theme = tg.themeParams;
+    document.body.style.backgroundColor = theme.bg_color || "#FFFFFF";
+    document.body.style.color = theme.text_color || "#000000";
+
+    // Gestione del click sul bottone
+    document.getElementById('sendData').addEventListener('click', () => {
+        // Invia dati al bot
+        tg.sendData("some data"); // Modifica "some data" con i dati che vuoi inviare
+    });
+} else {
+    console.error("Telegram WebApp non è disponibile in questo contesto.");
+}
