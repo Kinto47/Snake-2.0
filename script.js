@@ -150,3 +150,5 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize with the PLAY section visible
     showSection(playSection);
 });
+
+window.Telegram.WebApp.ready(); 
